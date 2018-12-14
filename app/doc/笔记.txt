@@ -1,0 +1,54 @@
+TabHost
+TabWidget
+
+每个选项卡所属的内容，是一个Activity
+
+content：//sms/conversations是按照会话来查询短信数据库
+
+系统设置表
+sms, (SELECT thread_id AS group_thread_id, MAX(date)AS group_date, COUNT(*) AS msg_count FROM sms GROUP BY thread_id) AS groups
+系统设置的查询条件
+sms.thread_id = groups.group_thread_id AND sms.date = groups.group_date
+系统设置的列
+sms.body AS snippet
+sms.thread_id AS thread_id
+groups.msg_count AS msg_count
+
+select
+sms.body AS snippet, sms.thread_id AS thread_id, groups.msg_count AS msg_count
+from
+sms, (SELECT thread_id AS group_thread_id, MAX(date)AS group_date, COUNT(*) AS msg_count FROM sms GROUP BY thread_id) AS groups
+where
+sms.thread_id = groups.group_thread_id AND sms.date = groups.group_date
+
+AsyncQueryHandler
+
+mProjectionMap:这是系统指定的三列
+projectionIn：这是用户自己指定的列
+
+通过Phone.content_uri能查到这三个字段
+data1：电话号码
+diaplay_name：联系人姓名
+contact_id：联系人的id
+
+Starting: Intent { act=android.intent.action.PICK dat=content://com.android.contacts/contacts cmp=com.android.contacts/.ContactsListActivity } from 
+
+1.群组表
+create table groups(
+	_id integer primary key autoincrement,
+	name varchar(20)
+)
+2.会话和群组表的关联关系表
+create table thread_group(
+	_id integer primary key autoincrement,
+	thread_id integer,
+	group_id integer
+)
+
+select * from sms where thread_id in (2, 1, 15, 5, 13)
+
+
+执行搜索：
+1.接收搜索条件
+2.搜索你的数据
+3.呈现数据

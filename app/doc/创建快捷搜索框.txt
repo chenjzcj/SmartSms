@@ -1,0 +1,39 @@
+﻿1.在res/xml/下创建searchable.xml文件
+	label 注意：必须指向一个资源ID，例如@string/search_sms
+	hint
+	
+2.创建searchableActivity
+	在manifest文件中配置activity中的信息
+	<activity>
+		<intent-filter>
+			<action name />
+		</intent-filter>
+		<meta-data 
+			   name
+			   resource />
+	</activity>
+	
+3.为了能让整个应用都可以调出搜索框,在application节点中配置
+	<meta-data
+		name
+		value />
+	
+4.通过onSearchRequested()方法调出搜索框
+
+5.在SearchableActivity中获取Intent,获取SearchManager.QUERY参数的值
+	进行搜索，搜索完之后获得Cursor,绑定数据
+	
+6.如果想要类似AutoCompleteTextView的效果需要自定义一个Provider,详细步骤如下:
+	step1: 自定义一个Provider实现SearchRecentSuggestionsProvider
+	step2: 在searchable.xml文件中加以下属性:
+		searchSuggestAuthority		searchSuggestSelection
+	step3: 在自定义的Provider的无参构造函数中调用setupSuggestions
+	step4: 重写query方法,查询短信数据库.
+	step5: 对查询出来的Cursor游标进行转换,需要转换成MatrixCursor
+			其中列值对应的分别是:
+			BaseColumns._ID, 
+			SearchManager.SUGGEST_COLUMN_TEXT_1,
+			SearchManager.SUGGEST_COLUMN_TEXT_2,
+			SearchManager.SUGGEST_COLUMN_QUERY
+			
+			最后return matrixCursor; 

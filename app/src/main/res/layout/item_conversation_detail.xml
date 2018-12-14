@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TableLayout 
+        android:id="@+id/tl_conversation_detail_receive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="0"
+        >
+        <TableRow >
+            <TextView 
+                android:id="@+id/tv_conversation_detail_receive_body"
+                android:text="短信内容aaaaaaaaaaaaaaa"
+                android:textSize="16sp"
+                android:background="@drawable/receive_msg_bubble"
+                android:gravity="center"
+                />
+            <TextView 
+                android:id="@+id/tv_conversation_detail_receive_date"
+                android:text="2014-13-41"
+                android:textColor="@android:color/darker_gray"
+                />
+        </TableRow>
+    </TableLayout>
+
+     <TableLayout 
+         android:id="@+id/tl_conversation_detail_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="1"
+        >
+        <TableRow 
+            android:gravity="right">
+            <TextView 
+                android:id="@+id/tv_conversation_detail_send_date"
+                android:text="2014-13-41"
+                android:textColor="@android:color/darker_gray"
+                />
+            <TextView 
+                android:id="@+id/tv_conversation_detail_send_body"
+                android:text="短信内容aaaaaaa"
+                android:textSize="16sp"
+                android:background="@drawable/send_msg_bubble"
+                android:gravity="center"
+                />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
