@@ -29,8 +29,6 @@ public class SearchableActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         init();
         //获取到启动这个activity的intent
         Intent intent = getIntent();
@@ -43,27 +41,25 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void init() {
-        ListView lv_search_list = getListView();
+        ListView lvSearchList = getListView();
         mAdapter = new SearchCursorAdapter(this, null);
-        lv_search_list.setAdapter(mAdapter);
-
+        lvSearchList.setAdapter(mAdapter);
     }
 
     class SearchCursorAdapter extends CursorAdapter {
 
         public SearchCursorAdapter(Context context, Cursor c) {
             super(context, c);
-            // TODO Auto-generated constructor stub
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             ViewHolder mHolder = new ViewHolder();
             View v = View.inflate(context, R.layout.item_conversation_list, null);
-            mHolder.iv_conversation_list_photo = (ImageView) v.findViewById(R.id.iv_conversation_list_photo);
-            mHolder.tv_conversation_list_name = (TextView) v.findViewById(R.id.tv_conversation_list_name);
-            mHolder.tv_conversation_list_date = (TextView) v.findViewById(R.id.tv_conversation_list_date);
-            mHolder.tv_conversation_list_body = (TextView) v.findViewById(R.id.tv_conversation_list_body);
+            mHolder.ivConversationListPhoto = v.findViewById(R.id.iv_conversation_list_photo);
+            mHolder.tvConversationListName = v.findViewById(R.id.tv_conversation_list_name);
+            mHolder.tvConversationListDate = v.findViewById(R.id.tv_conversation_list_date);
+            mHolder.tvConversationListBody = v.findViewById(R.id.tv_conversation_list_body);
             v.setTag(mHolder);
             return v;
         }
@@ -73,47 +69,41 @@ public class SearchableActivity extends ListActivity {
             String address = cursor.getString(COLUMN_INDEX_ADDRESS);
             long date = cursor.getLong(COLUMN_INDEX_DATE);
             String body = cursor.getString(COLUMN_INDEX_BODY);
-
             ViewHolder mHolder = (ViewHolder) view.getTag();
-
-
             //设置会话条目的body
-            mHolder.tv_conversation_list_body.setText(body);
-
+            mHolder.tvConversationListBody.setText(body);
             //设置会话条目的时间
-            String dateStr = null;
+            String dateStr;
             if (DateUtils.isToday(date)) {
                 dateStr = DateFormat.getTimeFormat(context).format(date);
             } else {
                 dateStr = DateFormat.getDateFormat(context).format(date);
             }
-            mHolder.tv_conversation_list_date.setText(dateStr);
+            mHolder.tvConversationListDate.setText(dateStr);
 
             //设置会话列表的姓名
             String name = Utils.getContactNameByAddress(address, getContentResolver());
             if (TextUtils.isEmpty(name)) {
                 //陌生人
-                mHolder.tv_conversation_list_name.setText(address);
-                mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_unknow_contact_picture);
+                mHolder.tvConversationListName.setText(address);
+                mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_unknow_contact_picture);
             } else {
                 //熟人
-                mHolder.tv_conversation_list_name.setText(name);
+                mHolder.tvConversationListName.setText(name);
                 Bitmap bm = Utils.getContactPhotoByAddress(address, getContentResolver());
                 if (bm == null) {
-                    mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_contact_picture);
+                    mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_contact_picture);
                 } else {
-                    mHolder.iv_conversation_list_photo.setImageBitmap(bm);
+                    mHolder.ivConversationListPhoto.setImageBitmap(bm);
                 }
-
             }
-
         }
 
         class ViewHolder {
-            ImageView iv_conversation_list_photo;
-            TextView tv_conversation_list_name;
-            TextView tv_conversation_list_date;
-            TextView tv_conversation_list_body;
+            ImageView ivConversationListPhoto;
+            TextView tvConversationListName;
+            TextView tvConversationListDate;
+            TextView tvConversationListBody;
         }
     }
 

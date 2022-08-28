@@ -19,9 +19,12 @@ import com.suk.smartsms.utils.Utils;
 
 import java.util.HashMap;
 
-public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNotifyAdapterListner, OnItemClickListener {
+/**
+ * @author Administrator
+ */
+public class FolderUI extends ListActivity implements MyAsyncQueryHandler.NotifyAdapterListener, OnItemClickListener {
 
-    private ListView lv_folder_ui;
+    private ListView lvFolderUi;
     private int[] folderIcons;
     private String[] folderLabels;
     private HashMap<Integer, Integer> folderCount;
@@ -29,9 +32,8 @@ public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNoti
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        lv_folder_ui = getListView();
+        lvFolderUi = getListView();
         init();
     }
 
@@ -49,7 +51,7 @@ public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNoti
                 "已发送",
                 "草稿箱"
         };
-        folderCount = new HashMap<Integer, Integer>();
+        folderCount = new HashMap<>();
         for (int i = 0; i < folderLabels.length; i++) {
             folderCount.put(i, 0);
             //异步查询4个箱子的短信数量
@@ -57,10 +59,9 @@ public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNoti
             mHandler.setOnNotifyAdapterListner(this);
             mHandler.startQuery(i, null, Utils.getTypeUri(i), new String[]{"count(*) AS count"}, null, null, null);
         }
-
         mAdapter = new FolderUIAdapter();
-        lv_folder_ui.setAdapter(mAdapter);
-        lv_folder_ui.setOnItemClickListener(this);
+        lvFolderUi.setAdapter(mAdapter);
+        lvFolderUi.setOnItemClickListener(this);
     }
 
     class FolderUIAdapter extends BaseAdapter {
@@ -72,25 +73,23 @@ public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNoti
 
         @Override
         public Object getItem(int position) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public long getItemId(int position) {
-            // TODO Auto-generated method stub
             return 0;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = View.inflate(FolderUI.this, R.layout.item_folder_list, null);
-            ImageView iv_folder_list_icon = (ImageView) v.findViewById(R.id.iv_folder_list_icon);
-            TextView tv_folder_list_label = (TextView) v.findViewById(R.id.tv_folder_list_label);
-            TextView tv_folder_list_count = (TextView) v.findViewById(R.id.tv_folder_list_count);
-            iv_folder_list_icon.setImageResource(folderIcons[position]);
-            tv_folder_list_label.setText(folderLabels[position]);
-            tv_folder_list_count.setText(folderCount.get(position) + "");
+            ImageView ivFolderListIcon = v.findViewById(R.id.iv_folder_list_icon);
+            TextView tvFolderListLabel = v.findViewById(R.id.tv_folder_list_label);
+            TextView tvFolderListCount = v.findViewById(R.id.tv_folder_list_count);
+            ivFolderListIcon.setImageResource(folderIcons[position]);
+            tvFolderListLabel.setText(folderLabels[position]);
+            tvFolderListCount.setText(String.valueOf(folderCount.get(position)));
             return v;
         }
 
@@ -111,11 +110,9 @@ public class FolderUI extends ListActivity implements MyAsyncQueryHandler.onNoti
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(this, FolerDetailUI.class);
         intent.putExtra("type", position);
         startActivity(intent);
-
     }
 }

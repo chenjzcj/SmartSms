@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+/**
+ * @author Administrator
+ */
 public class SendSmsBroadcastReceiver extends BroadcastReceiver {
 
     @Override
@@ -15,5 +18,4 @@ public class SendSmsBroadcastReceiver extends BroadcastReceiver {
             Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

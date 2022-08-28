@@ -39,20 +39,19 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         init();
     }
 
     private void init() {
-        ListView lv_group_list = getListView();
+        ListView lvGroupList = getListView();
         mAdapter = new GroupCursorAdapter(this, null);
-        lv_group_list.setAdapter(mAdapter);
+        lvGroupList.setAdapter(mAdapter);
 
         prepareData();
 
-        lv_group_list.setOnItemLongClickListener(this);
-        lv_group_list.setOnItemClickListener(this);
+        lvGroupList.setOnItemLongClickListener(this);
+        lvGroupList.setOnItemClickListener(this);
     }
 
     private void prepareData() {
@@ -61,11 +60,10 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
 
     }
 
-    class GroupCursorAdapter extends CursorAdapter {
+    static class GroupCursorAdapter extends CursorAdapter {
 
         public GroupCursorAdapter(Context context, Cursor c) {
             super(context, c);
-            // TODO Auto-generated constructor stub
         }
 
         @Override
@@ -76,7 +74,7 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             String name = cursor.getString(cursor.getColumnIndex("name"));
-            TextView tv = (TextView) view.findViewById(R.id.tv_group_list_name);
+            TextView tv = view.findViewById(R.id.tv_group_list_name);
             tv.setText(name);
         }
 
@@ -98,7 +96,6 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         AlertDialog.Builder builder = new Builder(this);
         builder.setTitle("新建群组");
         View v = View.inflate(this, R.layout.create_group, null);
-
         final AlertDialog ad = builder.create();
         ad.setView(v, 0, 0, 0, 0);
         ad.show();
@@ -108,22 +105,21 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         ad.getWindow().setAttributes(lp);
 
         //给对话框中的按钮设置侦听
-        Button bt_create_group = (Button) v.findViewById(R.id.bt_create_group);
-        final EditText et_create_group_name = (EditText) v.findViewById(R.id.et_create_group_name);
+        Button bt_create_group = v.findViewById(R.id.bt_create_group);
+        final EditText et_create_group_name = v.findViewById(R.id.et_create_group_name);
         bt_create_group.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 String name = et_create_group_name.getText().toString();
                 if (TextUtils.isEmpty(name)) {
-                    Toast.makeText(GroupUI.this, "群组名字不能为空", 0).show();
+                    Toast.makeText(GroupUI.this, "群组名字不能为空", Toast.LENGTH_SHORT).show();
                 } else {
                     //创建群组
                     addGroup(name);
                     ad.dismiss();
                 }
             }
-
         });
     }
 
@@ -133,16 +129,15 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         values.put("name", name);
         Uri uri = getContentResolver().insert(SmsUri.GROUP_URI, values);
         if (ContentUris.parseId(uri) != -1) {
-            Toast.makeText(this, "创建成功", 0).show();
+            Toast.makeText(this, "创建成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "创建失败", 0).show();
+            Toast.makeText(this, "创建失败", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                   int position, long id) {
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 //		Cursor cursor = mAdapter.getCursor();
 //		cursor.moveToPosition(position);
         Cursor cursor = (Cursor) mAdapter.getItem(position);
@@ -164,12 +159,10 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
                     case 1://点击了删除
                         showDeleteDialog(groupId);
                         break;
-
+                    default:
+                        break;
                 }
-
             }
-
-
         });
         builder.show();
     }
@@ -186,7 +179,6 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteGroup(groupId);
-
             }
         });
         builder.show();
@@ -196,9 +188,9 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
     private void deleteGroup(int groupId) {
         int number = getContentResolver().delete(ContentUris.withAppendedId(SmsUri.GROUP_ID_URI, groupId), null, null);
         if (number > 0) {
-            Toast.makeText(this, "删除成功", 0).show();
+            Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "删除失败", 0).show();
+            Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -206,7 +198,6 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         AlertDialog.Builder builder = new Builder(this);
         builder.setTitle("修改群组");
         View v = View.inflate(this, R.layout.create_group, null);
-
         final AlertDialog ad = builder.create();
         ad.setView(v, 0, 0, 0, 0);
         ad.show();
@@ -216,16 +207,16 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         ad.getWindow().setAttributes(lp);
 
         //给对话框中的按钮设置侦听
-        Button bt_create_group = (Button) v.findViewById(R.id.bt_create_group);
-        bt_create_group.setText("确认修改");
-        final EditText et_create_group_name = (EditText) v.findViewById(R.id.et_create_group_name);
-        bt_create_group.setOnClickListener(new OnClickListener() {
+        Button btCreateGroup = v.findViewById(R.id.bt_create_group);
+        btCreateGroup.setText("确认修改");
+        final EditText etCreateGroupName = v.findViewById(R.id.et_create_group_name);
+        btCreateGroup.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String name = et_create_group_name.getText().toString();
+                String name = etCreateGroupName.getText().toString();
                 if (TextUtils.isEmpty(name)) {
-                    Toast.makeText(GroupUI.this, "群组名字不能为空", 0).show();
+                    Toast.makeText(GroupUI.this, "群组名字不能为空", Toast.LENGTH_SHORT).show();
                 } else {
                     //修改群组
                     updateGroup(name, groupId);
@@ -234,7 +225,6 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
             }
 
         });
-
     }
 
     private void updateGroup(String name, int groupId) {
@@ -242,24 +232,21 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         values.put("name", name);
         int number = getContentResolver().update(SmsUri.GROUP_URI, values, "_id = ?", new String[]{groupId + ""});
         if (number > 0) {
-            Toast.makeText(this, "修改成功", 0).show();
+            Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "修改失败", 0).show();
+            Toast.makeText(this, "修改失败", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
-
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Cursor cursor = (Cursor) mAdapter.getItem(position);
         int groupId = cursor.getInt(0);
         String threadIds = getThreadIdsFromGroup(groupId);
         if (TextUtils.isEmpty(threadIds)) {
-            Toast.makeText(this, "该群组下没有任何会话", 0).show();
+            Toast.makeText(this, "该群组下没有任何会话", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(this, ConversationUI.class);
-
             String name = cursor.getString(1);
             intent.putExtra("name", name);
             intent.putExtra("threadIds", threadIds);
@@ -267,7 +254,9 @@ public class GroupUI extends ListActivity implements OnItemLongClickListener, On
         }
     }
 
-    //通过群组id，查询该群组下的所有会话的id
+    /**
+     * 通过群组id，查询该群组下的所有会话的id
+     */
     private String getThreadIdsFromGroup(int groupId) {
         Cursor cursor = getContentResolver().query(SmsUri.THREAD_GROUP_URI, new String[]{"thread_id"}, "group_id = ?", new String[]{groupId + ""}, null);
         StringBuilder sb = new StringBuilder();

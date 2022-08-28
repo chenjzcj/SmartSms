@@ -10,11 +10,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.suk.smartsms.db.GroupSQLiteOpenHelper;
+import com.suk.smartsms.db.GroupSqliteOpenHelper;
 
 public class GroupContentProvider extends ContentProvider {
 
-    GroupSQLiteOpenHelper mOpenHelper;
+    GroupSqliteOpenHelper mOpenHelper;
     static final String AUTHORITY = "com.itheima.groupprovider";
     static final Uri NOTIFY_URI = Uri.parse("content://aa.bb.cc");
     static UriMatcher um = new UriMatcher(UriMatcher.NO_MATCH);
@@ -30,13 +30,12 @@ public class GroupContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = GroupSQLiteOpenHelper.getInstance(getContext());
+        mOpenHelper = GroupSqliteOpenHelper.getInstance(getContext());
         return false;
     }
 
     @Override
-    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
-                        String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         switch (um.match(uri)) {
             case GROUP_CODE:
@@ -91,8 +90,7 @@ public class GroupContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         switch (um.match(uri)) {
             case GROUP_CODE:
                 SQLiteDatabase db = mOpenHelper.getWritableDatabase();

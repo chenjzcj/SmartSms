@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.suk.smartsms"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.suk.smartsms">
 
-    <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_SMS"/>
-    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -16,42 +16,42 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity android:name=".ConversationUI">
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.itheima.smartsms.SearchableActivity"/>
+                android:value="com.itheima.smartsms.SearchableActivity" />
         </activity>
-        <activity android:name=".FolderUI"/>
-        <activity android:name=".GroupUI"/>
-        <activity android:name=".ConversationDetailUI"/>
-        <activity android:name=".NewMessageUI"/>
-        <activity android:name=".FolerDetailUI"/>
+        <activity android:name=".FolderUI" />
+        <activity android:name=".GroupUI" />
+        <activity android:name=".ConversationDetailUI" />
+        <activity android:name=".NewMessageUI" />
+        <activity android:name=".FolerDetailUI" />
 
         <receiver android:name=".receiver.SendSmsBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.itheima.sendsms"/>
+                <action android:name="com.itheima.sendsms" />
             </intent-filter>
         </receiver>
         <provider
             android:name=".provider.GroupContentProvider"
-            android:authorities="com.itheima.groupprovider"/>
+            android:authorities="com.itheima.groupprovider" />
         <activity android:name=".SearchableActivity">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
         <provider
             android:name=".provider.MySuggestionProvider"
-            android:authorities="com.itheima.searchprovider"/>
+            android:authorities="com.itheima.searchprovider" />
     </application>
 
 </manifest>

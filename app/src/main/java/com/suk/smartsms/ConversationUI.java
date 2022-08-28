@@ -38,6 +38,9 @@ import com.suk.smartsms.utils.Utils;
 
 import java.util.HashSet;
 
+/**
+ * @author Administrator
+ */
 public class ConversationUI extends Activity implements OnItemClickListener, OnClickListener, OnItemLongClickListener {
 
     private ConversationListCursorAdapter mAdapter;
@@ -57,19 +60,19 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
     }
 
     private void init() {
-        selectedConversation = new HashSet<Integer>();
+        selectedConversation = new HashSet<>();
 
-        bt_conversation_newmsg = (Button) findViewById(R.id.bt_conversation_newmsg);
-        bt_conversation_select_all = (Button) findViewById(R.id.bt_conversation_select_all);
-        bt_conversation_select_cancel = (Button) findViewById(R.id.bt_conversation_select_cancel);
-        bt_conversation_deletemsg = (Button) findViewById(R.id.bt_conversation_deletemsg);
+        bt_conversation_newmsg = findViewById(R.id.bt_conversation_newmsg);
+        bt_conversation_select_all = findViewById(R.id.bt_conversation_select_all);
+        bt_conversation_select_cancel = findViewById(R.id.bt_conversation_select_cancel);
+        bt_conversation_deletemsg = findViewById(R.id.bt_conversation_deletemsg);
         bt_conversation_newmsg.setOnClickListener(this);
         bt_conversation_select_all.setOnClickListener(this);
         bt_conversation_select_cancel.setOnClickListener(this);
         bt_conversation_deletemsg.setOnClickListener(this);
 
 
-        lv_conversation_list = (ListView) findViewById(R.id.lv_conversation_list);
+        lv_conversation_list = findViewById(R.id.lv_conversation_list);
         mAdapter = new ConversationListCursorAdapter(this, null);
         lv_conversation_list.setAdapter(mAdapter);
 
@@ -129,11 +132,11 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             ViewHolder mHolder = new ViewHolder();
             View v = View.inflate(context, R.layout.item_conversation_list, null);
-            mHolder.cb_conversation_selected = (CheckBox) v.findViewById(R.id.cb_conversation_selected);
-            mHolder.iv_conversation_list_photo = (ImageView) v.findViewById(R.id.iv_conversation_list_photo);
-            mHolder.tv_conversation_list_name = (TextView) v.findViewById(R.id.tv_conversation_list_name);
-            mHolder.tv_conversation_list_date = (TextView) v.findViewById(R.id.tv_conversation_list_date);
-            mHolder.tv_conversation_list_body = (TextView) v.findViewById(R.id.tv_conversation_list_body);
+            mHolder.cbConversationSelected = v.findViewById(R.id.cb_conversation_selected);
+            mHolder.ivConversationListPhoto = v.findViewById(R.id.iv_conversation_list_photo);
+            mHolder.tvConversationListName = v.findViewById(R.id.tv_conversation_list_name);
+            mHolder.tvConversationListDate = v.findViewById(R.id.tv_conversation_list_date);
+            mHolder.tvConversationListBody = v.findViewById(R.id.tv_conversation_list_body);
             v.setTag(mHolder);
             return v;
         }
@@ -145,44 +148,44 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
             long date = cursor.getLong(COLUMN_INDEX_DATE);
             String msgCount = cursor.getString(COLUMN_INDEX_MSG_COUNT);
             String body = cursor.getString(COLUMN_INDEX_SNIPPET);
-            int thread_id = cursor.getInt(COLUMN_INDEX_THREAD_ID);
+            int threadId = cursor.getInt(COLUMN_INDEX_THREAD_ID);
 
             ViewHolder mHolder = (ViewHolder) view.getTag();
 
             //设置选框是否显示
             if (isEditting) {
-                mHolder.cb_conversation_selected.setVisibility(View.VISIBLE);
-                mHolder.cb_conversation_selected.setChecked(selectedConversation.contains(thread_id));
+                mHolder.cbConversationSelected.setVisibility(View.VISIBLE);
+                mHolder.cbConversationSelected.setChecked(selectedConversation.contains(threadId));
             } else {
-                mHolder.cb_conversation_selected.setVisibility(View.GONE);
+                mHolder.cbConversationSelected.setVisibility(View.GONE);
             }
 
             //设置会话条目的body
-            mHolder.tv_conversation_list_body.setText(body);
+            mHolder.tvConversationListBody.setText(body);
 
             //设置会话条目的时间
-            String dateStr = null;
+            String dateStr;
             if (DateUtils.isToday(date)) {
                 dateStr = DateFormat.getTimeFormat(context).format(date);
             } else {
                 dateStr = DateFormat.getDateFormat(context).format(date);
             }
-            mHolder.tv_conversation_list_date.setText(dateStr);
+            mHolder.tvConversationListDate.setText(dateStr);
 
             //设置会话列表的姓名
             String name = Utils.getContactNameByAddress(address, getContentResolver());
             if (TextUtils.isEmpty(name)) {
                 //陌生人
-                mHolder.tv_conversation_list_name.setText(address + "(" + msgCount + ")");
-                mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_unknow_contact_picture);
+                mHolder.tvConversationListName.setText(address + "(" + msgCount + ")");
+                mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_unknow_contact_picture);
             } else {
                 //熟人
-                mHolder.tv_conversation_list_name.setText(name + "(" + msgCount + ")");
+                mHolder.tvConversationListName.setText(name + "(" + msgCount + ")");
                 Bitmap bm = Utils.getContactPhotoByAddress(address, getContentResolver());
                 if (bm == null) {
-                    mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_contact_picture);
+                    mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_contact_picture);
                 } else {
-                    mHolder.iv_conversation_list_photo.setImageBitmap(bm);
+                    mHolder.ivConversationListPhoto.setImageBitmap(bm);
                 }
 
             }
@@ -190,15 +193,17 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         }
 
         class ViewHolder {
-            CheckBox cb_conversation_selected;
-            ImageView iv_conversation_list_photo;
-            TextView tv_conversation_list_name;
-            TextView tv_conversation_list_date;
-            TextView tv_conversation_list_body;
+            CheckBox cbConversationSelected;
+            ImageView ivConversationListPhoto;
+            TextView tvConversationListName;
+            TextView tvConversationListDate;
+            TextView tvConversationListBody;
         }
     }
 
-    //此方法只调用一次，菜单创建时调用
+    /**
+     * 此方法只调用一次，菜单创建时调用
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_ID_SEARCH, 0, "搜索");
@@ -207,7 +212,9 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         return super.onCreateOptionsMenu(menu);
     }
 
-    //每次菜单显示时调用
+    /**
+     * 每次菜单显示时调用
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isEditting) {
@@ -222,7 +229,9 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         return super.onPrepareOptionsMenu(menu);
     }
 
-    //option菜单的点击事件
+    /**
+     * option菜单的点击事件
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -239,19 +248,21 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
                 isEditting = false;
                 refreshState();
                 break;
-
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    //根据是否编辑状态决定四个按钮是否显示
+    /**
+     * 根据是否编辑状态决定四个按钮是否显示
+     */
     private void refreshState() {
         if (isEditting) {
             bt_conversation_newmsg.setVisibility(View.GONE);
             bt_conversation_select_all.setVisibility(View.VISIBLE);
             bt_conversation_select_cancel.setVisibility(View.VISIBLE);
             bt_conversation_deletemsg.setVisibility(View.VISIBLE);
-
             bt_conversation_select_cancel.setEnabled(selectedConversation.size() != 0);
             bt_conversation_deletemsg.setEnabled(selectedConversation.size() != 0);
             bt_conversation_select_all.setEnabled(selectedConversation.size() != lv_conversation_list.getCount());
@@ -264,18 +275,17 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (isEditting) {
             Cursor cursor = mAdapter.getCursor();
             cursor.moveToPosition(position);
-            int thread_id = cursor.getInt(COLUMN_INDEX_THREAD_ID);
-            CheckBox cb = (CheckBox) view.findViewById(R.id.cb_conversation_selected);
+            int threadId = cursor.getInt(COLUMN_INDEX_THREAD_ID);
+            CheckBox cb = view.findViewById(R.id.cb_conversation_selected);
             if (cb.isChecked()) {
-                selectedConversation.remove(thread_id);
+                selectedConversation.remove(threadId);
                 cb.setChecked(false);
             } else {
-                selectedConversation.add(thread_id);
+                selectedConversation.add(threadId);
                 cb.setChecked(true);
             }
             refreshState();
@@ -317,7 +327,8 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
             case R.id.bt_conversation_deletemsg:
                 showDeleteDialog();
                 break;
-
+            default:
+                break;
         }
 
     }
@@ -367,7 +378,7 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         Thread t = new Thread() {
             @Override
             public void run() {
-                for (int thread_id : selectedConversation) {
+                for (int threadId : selectedConversation) {
                     try {
                         sleep(1000);
                     } catch (InterruptedException e) {
@@ -378,7 +389,7 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
                         needStop = false;
                         break;
                     }
-                    getContentResolver().delete(SmsUri.SMS_URI, "thread_id = ?", new String[]{thread_id + ""});
+                    getContentResolver().delete(SmsUri.SMS_URI, "thread_id = ?", new String[]{threadId + ""});
                     pd.incrementProgressBy(1);
                 }
 
@@ -404,7 +415,7 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
         Cursor cursor = (Cursor) mAdapter.getItem(position);
         int threadId = cursor.getInt(COLUMN_INDEX_THREAD_ID);
         //先检测一下该会话是否在某个群组中
-        String name = getThreadFromThread_Group(threadId);
+        String name = getThreadFromThreadGroup(threadId);
         if (TextUtils.isEmpty(name)) {
             //弹出群组的选择对话框
             showGroupSelectDialog(threadId);
@@ -452,7 +463,7 @@ public class ConversationUI extends Activity implements OnItemClickListener, OnC
 
     }
 
-    private String getThreadFromThread_Group(int threadId) {
+    private String getThreadFromThreadGroup(int threadId) {
         Cursor cursor = getContentResolver().query(SmsUri.THREAD_GROUP_URI, new String[]{"group_id"}, "thread_id = ?", new String[]{threadId + ""}, null);
         if (cursor.moveToFirst()) {
             int groupId = cursor.getInt(0);

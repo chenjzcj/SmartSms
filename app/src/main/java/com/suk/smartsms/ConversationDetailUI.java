@@ -25,13 +25,15 @@ import com.suk.smartsms.utils.SmsUri;
 import com.suk.smartsms.utils.Utils;
 
 
-public class ConversationDetailUI extends Activity implements OnClickListener, MyAsyncQueryHandler.onNotifyAdapterListner {
+/**
+ * @author Administrator
+ */
+public class ConversationDetailUI extends Activity implements OnClickListener, MyAsyncQueryHandler.NotifyAdapterListener {
 
     private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation_detail);
 
@@ -45,26 +47,19 @@ public class ConversationDetailUI extends Activity implements OnClickListener, M
     static final int COLUMN_INDEX_BODY = 1;
     static final int COLUMN_INDEX_DATE = 2;
     static final int COLUMN_INDEX_TYPE = 3;
-    private EditText et_conversation_detail_body;
-    private ListView lv_conversation_detail_list;
+    private EditText etConversationDetailBody;
+    private ListView lvConversationDetailList;
 
     private void init() {
-        Button bt_conversation_detail_back = (Button) findViewById(R.id.bt_conversation_detail_back);
-        Button bt_conversation_detail_send = (Button) findViewById(R.id.bt_conversation_detail_send);
-        bt_conversation_detail_back.setOnClickListener(this);
-        bt_conversation_detail_send.setOnClickListener(this);
-
-        et_conversation_detail_body = (EditText) findViewById(R.id.et_conversation_detail_body);
-
-        String[] projection = new String[]{
-                "_id",
-                "body",
-                "date",
-                "type"
-        };
-        lv_conversation_detail_list = (ListView) findViewById(R.id.lv_conversation_detail_list);
+        Button btConversationDetailBack = findViewById(R.id.bt_conversation_detail_back);
+        Button btConversationDetailSend = findViewById(R.id.bt_conversation_detail_send);
+        btConversationDetailBack.setOnClickListener(this);
+        btConversationDetailSend.setOnClickListener(this);
+        etConversationDetailBody = findViewById(R.id.et_conversation_detail_body);
+        String[] projection = new String[]{"_id", "body", "date", "type"};
+        lvConversationDetailList = findViewById(R.id.lv_conversation_detail_list);
         ConversationDetailCursorAdapter mAdapter = new ConversationDetailCursorAdapter(this, null);
-        lv_conversation_detail_list.setAdapter(mAdapter);
+        lvConversationDetailList.setAdapter(mAdapter);
         //查询会话里的短信
         MyAsyncQueryHandler mHandler = new MyAsyncQueryHandler(getContentResolver());
         mHandler.setOnNotifyAdapterListner(this);
@@ -72,31 +67,28 @@ public class ConversationDetailUI extends Activity implements OnClickListener, M
     }
 
     class ConversationDetailCursorAdapter extends CursorAdapter {
-
         public ConversationDetailCursorAdapter(Context context, Cursor c) {
             super(context, c);
-            // TODO Auto-generated constructor stub
         }
 
         //cursor模型层数据改变了，此方法调用
         @Override
         protected void onContentChanged() {
-            // TODO Auto-generated method stub
             super.onContentChanged();
             //listview滑动到最底部
-            lv_conversation_detail_list.setSelection(getCount() - 1);
+            lvConversationDetailList.setSelection(getCount() - 1);
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View v = View.inflate(context, R.layout.item_conversation_detail, null);
             ViewHolder mHolder = new ViewHolder();
-            mHolder.tl_conversation_detail_receive = (TableLayout) v.findViewById(R.id.tl_conversation_detail_receive);
-            mHolder.tv_conversation_detail_receive_body = (TextView) v.findViewById(R.id.tv_conversation_detail_receive_body);
-            mHolder.tv_conversation_detail_receive_date = (TextView) v.findViewById(R.id.tv_conversation_detail_receive_date);
-            mHolder.tl_conversation_detail_send = (TableLayout) v.findViewById(R.id.tl_conversation_detail_send);
-            mHolder.tv_conversation_detail_send_body = (TextView) v.findViewById(R.id.tv_conversation_detail_send_body);
-            mHolder.tv_conversation_detail_send_date = (TextView) v.findViewById(R.id.tv_conversation_detail_send_date);
+            mHolder.tlConversationDetailReceive = v.findViewById(R.id.tl_conversation_detail_receive);
+            mHolder.tvConversationDetailReceiveBody = v.findViewById(R.id.tv_conversation_detail_receive_body);
+            mHolder.tvConversationDetailReceiveDate = v.findViewById(R.id.tv_conversation_detail_receive_date);
+            mHolder.tlConversationDetailSend = v.findViewById(R.id.tl_conversation_detail_send);
+            mHolder.tvConversationDetailSendBody = v.findViewById(R.id.tv_conversation_detail_send_body);
+            mHolder.tvConversationDetailSendDate = v.findViewById(R.id.tv_conversation_detail_send_date);
             v.setTag(mHolder);
             return v;
         }
@@ -107,50 +99,47 @@ public class ConversationDetailUI extends Activity implements OnClickListener, M
             String body = cursor.getString(COLUMN_INDEX_BODY);
             long date = cursor.getLong(COLUMN_INDEX_DATE);
             int type = cursor.getInt(COLUMN_INDEX_TYPE);
-
-            String dateStr = null;
+            String dateStr;
             if (DateUtils.isToday(date)) {
                 dateStr = DateFormat.getTimeFormat(context).format(date);
             } else {
                 dateStr = DateFormat.getDateFormat(context).format(date);
             }
-
             //判断一下短信的类型
             if (type == 1) {
                 //接收的短信
-                mHolder.tl_conversation_detail_receive.setVisibility(View.VISIBLE);
-                mHolder.tl_conversation_detail_send.setVisibility(View.GONE);
-                mHolder.tv_conversation_detail_receive_body.setText(body);
-                mHolder.tv_conversation_detail_receive_date.setText(dateStr);
+                mHolder.tlConversationDetailReceive.setVisibility(View.VISIBLE);
+                mHolder.tlConversationDetailSend.setVisibility(View.GONE);
+                mHolder.tvConversationDetailReceiveBody.setText(body);
+                mHolder.tvConversationDetailReceiveDate.setText(dateStr);
             } else {
                 //发送的短信
-                mHolder.tl_conversation_detail_receive.setVisibility(View.GONE);
-                mHolder.tl_conversation_detail_send.setVisibility(View.VISIBLE);
-                mHolder.tv_conversation_detail_send_body.setText(body);
-                mHolder.tv_conversation_detail_send_date.setText(dateStr);
+                mHolder.tlConversationDetailReceive.setVisibility(View.GONE);
+                mHolder.tlConversationDetailSend.setVisibility(View.VISIBLE);
+                mHolder.tvConversationDetailSendBody.setText(body);
+                mHolder.tvConversationDetailSendDate.setText(dateStr);
             }
-
         }
 
         class ViewHolder {
-            TableLayout tl_conversation_detail_receive;
-            TextView tv_conversation_detail_receive_body;
-            TextView tv_conversation_detail_receive_date;
-            TableLayout tl_conversation_detail_send;
-            TextView tv_conversation_detail_send_body;
-            TextView tv_conversation_detail_send_date;
+            TableLayout tlConversationDetailReceive;
+            TextView tvConversationDetailReceiveBody;
+            TextView tvConversationDetailReceiveDate;
+            TableLayout tlConversationDetailSend;
+            TextView tvConversationDetailSendBody;
+            TextView tvConversationDetailSendDate;
         }
     }
 
     private void initTitle() {
-        TextView tv_conversation_detail_title = (TextView) findViewById(R.id.tv_conversation_detail_title);
+        TextView tvConversationDetailTitle = findViewById(R.id.tv_conversation_detail_title);
         String name = Utils.getContactNameByAddress(address, getContentResolver());
         if (TextUtils.isEmpty(name)) {
             //陌生人
-            tv_conversation_detail_title.setText(address);
+            tvConversationDetailTitle.setText(address);
         } else {
             //熟人
-            tv_conversation_detail_title.setText(name);
+            tvConversationDetailTitle.setText(name);
         }
     }
 
@@ -162,21 +151,20 @@ public class ConversationDetailUI extends Activity implements OnClickListener, M
                 finish();
                 break;
             case R.id.bt_conversation_detail_send:
-                String body = et_conversation_detail_body.getText().toString();
+                String body = etConversationDetailBody.getText().toString();
                 if (TextUtils.isEmpty(body)) {
                     Toast.makeText(this, "短信内容为空", 0).show();
                     break;
                 }
                 Utils.sendMessage(this, body, address);
-                et_conversation_detail_body.setText("");
-
+                etConversationDetailBody.setText("");
                 //隐藏输入法
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 break;
-
+            default:
+                break;
         }
-
     }
 
     @Override
@@ -185,7 +173,6 @@ public class ConversationDetailUI extends Activity implements OnClickListener, M
 
     @Override
     public void onPostNotify(int token, Object cookie, Cursor cursor) {
-        lv_conversation_detail_list.setSelection(cursor.getCount() - 1);
-
+        lvConversationDetailList.setSelection(cursor.getCount() - 1);
     }
 }

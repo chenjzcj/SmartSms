@@ -24,31 +24,29 @@ import com.suk.smartsms.utils.Utils;
 
 import java.util.HashMap;
 
-public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQueryHandler.onNotifyAdapterListner {
+public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQueryHandler.NotifyAdapterListener {
 
     private int type;
     private FolderDetailCursorAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_detail);
         Intent intent = getIntent();
         type = intent.getIntExtra("type", -1);
-
         initTitle();
         init();
     }
 
     private void init() {
-        dateMap = new HashMap<Integer, String>();
-        smsMap = new HashMap<Integer, Integer>();
+        dateMap = new HashMap<>();
+        smsMap = new HashMap<>();
 
-        Button bt_folder_detail_newmsg = (Button) findViewById(R.id.bt_folder_detail_newmsg);
+        Button bt_folder_detail_newmsg = findViewById(R.id.bt_folder_detail_newmsg);
         bt_folder_detail_newmsg.setOnClickListener(this);
 
-        ListView lv_folder_detail_list = (ListView) findViewById(R.id.lv_folder_detail_list);
+        ListView lv_folder_detail_list = findViewById(R.id.lv_folder_detail_list);
         mAdapter = new FolderDetailCursorAdapter(this, null);
         lv_folder_detail_list.setAdapter(mAdapter);
         prepareData();
@@ -77,18 +75,15 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
 
         public FolderDetailCursorAdapter(Context context, Cursor c) {
             super(context, c);
-            // TODO Auto-generated constructor stub
         }
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return dateMap.size() + smsMap.size();
         }
 
         @Override
         protected void onContentChanged() {
-            // TODO Auto-generated method stub
             super.onContentChanged();
             Cursor cursor = getCursor();
             //在根据Cursor的内容初始化两个map之前，先把cursor的指针复位
@@ -99,6 +94,7 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
 
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (dateMap.containsKey(position)) {
                 String date = dateMap.get(position);
@@ -129,10 +125,10 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             ViewHolder mHolder = new ViewHolder();
             View v = View.inflate(context, R.layout.item_conversation_list, null);
-            mHolder.iv_conversation_list_photo = (ImageView) v.findViewById(R.id.iv_conversation_list_photo);
-            mHolder.tv_conversation_list_name = (TextView) v.findViewById(R.id.tv_conversation_list_name);
-            mHolder.tv_conversation_list_date = (TextView) v.findViewById(R.id.tv_conversation_list_date);
-            mHolder.tv_conversation_list_body = (TextView) v.findViewById(R.id.tv_conversation_list_body);
+            mHolder.ivConversationListPhoto = v.findViewById(R.id.iv_conversation_list_photo);
+            mHolder.tvConversationListName = v.findViewById(R.id.tv_conversation_list_name);
+            mHolder.tvConversationListDate = v.findViewById(R.id.tv_conversation_list_date);
+            mHolder.tvConversationListBody = v.findViewById(R.id.tv_conversation_list_body);
             v.setTag(mHolder);
             return v;
         }
@@ -140,44 +136,42 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ViewHolder mHolder = (ViewHolder) view.getTag();
-
             String body = cursor.getString(COLUMN_INDEX_BODY);
             String address = cursor.getString(COLUMN_INDEX_ADDRESS);
             long date = cursor.getLong(COLUMN_INDEX_DATE);
-
-            mHolder.tv_conversation_list_body.setText(body);
-            String dateStr = null;
+            mHolder.tvConversationListBody.setText(body);
+            String dateStr;
             if (DateUtils.isToday(date)) {
                 dateStr = DateFormat.getTimeFormat(context).format(date);
             } else {
                 dateStr = DateFormat.getDateFormat(context).format(date);
             }
-            mHolder.tv_conversation_list_date.setText(dateStr);
+            mHolder.tvConversationListDate.setText(dateStr);
             String name = Utils.getContactNameByAddress(address, getContentResolver());
             if (TextUtils.isEmpty(name)) {
                 //陌生人
-                mHolder.tv_conversation_list_name.setText(address);
-                mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_unknow_contact_picture);
+                mHolder.tvConversationListName.setText(address);
+                mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_unknow_contact_picture);
             } else {
                 //熟人
-                mHolder.tv_conversation_list_name.setText(name);
+                mHolder.tvConversationListName.setText(name);
                 Bitmap bm = Utils.getContactPhotoByAddress(address, getContentResolver());
                 if (bm == null) {
                     //说明没存头像
-                    mHolder.iv_conversation_list_photo.setImageResource(R.drawable.ic_contact_picture);
+                    mHolder.ivConversationListPhoto.setImageResource(R.drawable.ic_contact_picture);
                 } else {
                     //存的有头像
-                    mHolder.iv_conversation_list_photo.setImageBitmap(bm);
+                    mHolder.ivConversationListPhoto.setImageBitmap(bm);
                 }
             }
 
         }
 
         class ViewHolder {
-            ImageView iv_conversation_list_photo;
-            TextView tv_conversation_list_name;
-            TextView tv_conversation_list_date;
-            TextView tv_conversation_list_body;
+            ImageView ivConversationListPhoto;
+            TextView tvConversationListName;
+            TextView tvConversationListDate;
+            TextView tvConversationListBody;
         }
     }
 
@@ -195,7 +189,8 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
             case 3:
                 setTitle("草稿箱");
                 break;
-
+            default:
+                break;
         }
     }
 
@@ -232,5 +227,4 @@ public class FolerDetailUI extends Activity implements OnClickListener, MyAsyncQ
     public void onPostNotify(int token, Object cookie, Cursor cursor) {
 
     }
-
 }
